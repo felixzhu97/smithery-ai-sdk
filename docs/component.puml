@@ -1,0 +1,42 @@
+@startuml smithery-ai-sdk 组件图
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title 组件图 - AI SDK客户端
+
+' 客户端组件边界
+System_Boundary(client, "AI SDK客户端") {
+    Component(transport, "传输层", "处理HTTP通信", $tags="network")
+    Component(integrations, "集成模块", "封装不同AI服务", $tags="integration")
+    Component(llm, "LLM集成", "对接大语言模型", $tags="llm")
+    Component(auth, "认证模块", "处理API密钥和认证", $tags="security")
+    Component(cache, "缓存层", "本地结果缓存", $tags="performance")
+}
+
+' 服务端组件边界
+System_Boundary(server, "API服务") {
+    Component(controllers, "控制器", "处理API请求", $tags="api")
+    Component(models, "数据模型", "定义数据结构", $tags="data")
+    Component(hooks, "钩子", "处理业务逻辑", $tags="business")
+    Component(services, "服务层", "核心业务逻辑", $tags="core")
+    Component(repository, "仓储层", "数据访问", $tags="database")
+}
+
+' 关系定义
+Rel(transport, integrations, "调用服务接口", "函数调用")
+Rel(integrations, llm, "使用LLM服务", "函数调用")
+Rel(integrations, auth, "获取认证信息", "函数调用")
+Rel(integrations, cache, "读写缓存", "函数调用")
+Rel(controllers, models, "数据验证转换", "函数调用")
+Rel(controllers, hooks, "触发业务事件", "事件")
+Rel(controllers, services, "调用业务逻辑", "函数调用")
+Rel(services, repository, "数据持久化", "函数调用")
+
+legend right
+| 关键组件说明 |
+| **传输层**：Axios实现 |
+| **LLM集成**：支持OpenAI/Anthropic |
+| **认证模块**：JWT/OAuth2.0 |
+| **缓存层**：Redis/Memory |
+endlegend
+
+@enduml

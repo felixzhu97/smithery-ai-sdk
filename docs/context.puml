@@ -1,0 +1,26 @@
+@startuml smithery-ai-sdk 系统上下文图
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title 系统上下文图
+
+Person(用户, "用户", "使用AI服务的终端用户")
+System_Boundary(smithery, "Smithery AI SDK系统") {
+    System(sdk, "AI SDK", "提供AI服务集成的客户端SDK", $tags="client")
+    System(registry, "服务器注册中心", "管理MCP服务器注册和发现", $tags="server")
+}
+System_Ext(ai_provider, "AI服务提供商", "如OpenAI/Anthropic等第三方AI服务", $tags="external")
+
+' 关系定义
+Rel(用户, sdk, "使用SDK调用AI服务", "HTTP/REST")
+Rel(sdk, registry, "查询可用服务器", "HTTP/REST")
+Rel(sdk, ai_provider, "调用AI服务API", "HTTP/REST")
+Rel(registry, ai_provider, "验证服务连接", "HTTP/REST")
+
+legend right
+| 颜色说明 |
+|<#ADD8E6> 用户系统 |
+|<#90EE90> 内部系统 |
+|<#FFA07A> 外部系统 |
+endlegend
+
+@enduml

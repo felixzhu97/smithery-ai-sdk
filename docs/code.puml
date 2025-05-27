@@ -1,0 +1,35 @@
+@startuml smithery-ai-sdk 代码图
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title 代码图 - 关键实现类
+
+' 客户端关键代码文件
+Component(transport_ts, "transport.ts", "TypeScript", "HTTP传输实现\n- 基于Axios\n- 请求拦截\n- 错误处理", $tags="network")
+Component(anthropic_ts, "anthropic.ts", "TypeScript", "Anthropic集成\n- 消息格式化\n- 流式响应处理", $tags="llm")
+Component(openai_ts, "openai.ts", "TypeScript", "OpenAI集成\n- 函数调用支持\n- 多模态处理", $tags="llm")
+Component(session_ts, "session.ts", "TypeScript", "会话管理\n- 状态维护\n- 历史记录", $tags="state")
+Component(config_ts, "config.ts", "TypeScript", "配置管理\n- 环境变量\n- 默认参数", $tags="config")
+
+' 服务端关键代码文件
+Component(server_ts, "server.ts", "TypeScript", "主服务入口\n- 路由初始化\n- 中间件加载", $tags="core")
+Component(auth_ts, "auth.ts", "TypeScript", "认证服务\n- JWT验证\n- 权限检查", $tags="security")
+Component(db_ts, "db.ts", "TypeScript", "数据库连接\n- ORM配置\n- 连接池", $tags="database")
+
+' 关系定义
+Rel(transport_ts, anthropic_ts, "调用API", "HTTP")
+Rel(transport_ts, openai_ts, "调用API", "HTTP")
+Rel(anthropic_ts, session_ts, "记录会话", "引用")
+Rel(openai_ts, session_ts, "记录会话", "引用")
+Rel(anthropic_ts, config_ts, "读取配置", "引用")
+Rel(openai_ts, config_ts, "读取配置", "引用")
+Rel(server_ts, auth_ts, "鉴权检查", "中间件")
+Rel(server_ts, db_ts, "数据库连接", "初始化")
+
+legend right
+| 文件路径说明 |
+| 客户端代码: typescript/sdk/src/client/ |
+| 服务端代码: typescript/sdk/src/server/ |
+| 共享代码: typescript/sdk/src/shared/ |
+endlegend
+
+@enduml

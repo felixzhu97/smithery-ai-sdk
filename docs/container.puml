@@ -1,0 +1,38 @@
+@startuml smithery-ai-sdk 容器图
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title 容器图
+
+Person(用户, "用户", "使用AI服务的终端用户")
+
+' AI SDK容器边界
+Container_Boundary(sdk, "AI SDK") {
+    Container(client, "客户端", "TypeScript", "提供AI服务集成接口", $tags="frontend")
+    Container(server, "服务端", "TypeScript", "处理会话和状态管理", $tags="backend")
+}
+
+' 服务器注册中心容器边界
+Container_Boundary(registry, "服务器注册中心") {
+    Container(api, "API服务", "TypeScript", "提供RESTful API", $tags="api")
+    ContainerDb(db, "数据库", "PostgreSQL", "存储服务器信息", $tags="database")
+}
+
+System_Ext(ai_provider, "AI服务提供商", "如OpenAI/Anthropic等第三方AI服务")
+
+' 关系定义
+Rel(用户, client, "通过SDK调用", "HTTP/REST")
+Rel(client, server, "管理会话状态", "WebSocket")
+Rel(client, api, "查询服务器列表", "HTTP/REST")
+Rel(api, db, "持久化数据", "JDBC")
+Rel(client, ai_provider, "调用AI服务", "HTTP/REST")
+Rel(api, ai_provider, "验证服务连接", "HTTP/REST")
+
+legend right
+| 技术说明 |
+| **客户端**：TypeScript/React |
+| **服务端**：Node.js/Express |
+| **API服务**：NestJS |
+| **数据库**：PostgreSQL 14 |
+endlegend
+
+@enduml
